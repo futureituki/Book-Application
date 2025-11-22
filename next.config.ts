@@ -5,6 +5,15 @@ const nextConfig: NextConfig = {
     ppr: true,
     clientSegmentCache: true,
     nodeMiddleware: true
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'books.google.com',
+        pathname: '/books/**',
+      },
+    ],
   }
 };
 

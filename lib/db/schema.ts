@@ -74,6 +74,7 @@ export const teamsRelations = relations(teams, ({ many }) => ({
 export const usersRelations = relations(users, ({ many }) => ({
   teamMembers: many(teamMembers),
   invitationsSent: many(invitations),
+  books: many(books),
 }));
 
 export const invitationsRelations = relations(invitations, ({ one }) => ({
@@ -137,3 +138,37 @@ export enum ActivityType {
   INVITE_TEAM_MEMBER = 'INVITE_TEAM_MEMBER',
   ACCEPT_INVITATION = 'ACCEPT_INVITATION',
 }
+
+export const books = sqliteTable('books', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  userId: integer('user_id')
+    .notNull()
+    .references(() => users.id),
+  googleBookId: text('google_book_id'),
+  title: text('title').notNull(),
+  authors: text('authors'), // JSON string
+  description: text('description'),
+  coverUrl: text('cover_url'),
+  isbn: text('isbn'),
+  status: text('status').notNull().default('want_to_read'),
+  rating: integer('rating'),
+  readAt: integer('read_at', { mode: 'timestamp' }),
+  createdAt: integer('created_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+  updatedAt: integer('updated_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+});
+
+export const booksRelations = relations(books, ({ one }) => ({
+  user: one(users, {
+    fields: [books.userId],
+    references: [users.id],
+  }),
+}));
+
+
+
+export type Book = typeof books.$inferSelect;
+export type NewBook = typeof books.$inferInsert;

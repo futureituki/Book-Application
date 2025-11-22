@@ -15,24 +15,25 @@ export const viewport: Viewport = {
 
 const manrope = Manrope({ subsets: ['latin'] });
 
-export default function RootLayout({
+export default async function RootLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
+  const [user, team] = await Promise.all([getUser(), getTeamForUser()]);
+
   return (
     <html
       lang="en"
       className={`bg-white dark:bg-gray-950 text-black dark:text-white ${manrope.className}`}
+      suppressHydrationWarning
     >
       <body className="min-h-[100dvh] bg-gray-50">
         <SWRConfig
           value={{
             fallback: {
-              // We do NOT await here
-              // Only components that read this data will suspend
-              '/api/user': getUser(),
-              '/api/team': getTeamForUser()
+              '/api/user': user,
+              '/api/team': team
             }
           }}
         >
