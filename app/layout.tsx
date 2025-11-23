@@ -1,7 +1,7 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Manrope } from 'next/font/google';
-import { getUser, getTeamForUser } from '@/lib/db/queries';
+import { getUser } from '@/lib/db/queries';
 import { SWRConfig } from 'swr';
 
 export const metadata: Metadata = {
@@ -20,7 +20,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [user, team] = await Promise.all([getUser(), getTeamForUser()]);
+  const user = await getUser();
 
   return (
     <html
@@ -33,7 +33,6 @@ export default async function RootLayout({
           value={{
             fallback: {
               '/api/user': user,
-              '/api/team': team
             }
           }}
         >
